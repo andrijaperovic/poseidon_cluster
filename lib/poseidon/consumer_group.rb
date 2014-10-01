@@ -230,7 +230,7 @@ class Poseidon::ConsumerGroup
       @consumers.push consumer
       prev_offset = consumer.offset
       yield consumer
-      unles opts[:commit]
+      unless opts[:commit]
         consumer.offset = prev_offset
       end
     end
