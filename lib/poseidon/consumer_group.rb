@@ -182,6 +182,9 @@ class Poseidon::ConsumerGroup
   # @param [Integer] offset
   def commit(partition, offset)
     zk.set offset_path(partition), offset.to_s
+    # in addition, set the offset on the consumer which matches the given partition
+    c = @consumers.select { |c| c.partition == partition }.first
+    c.offset = offset
   rescue ZK::Exceptions::NoNode
     zk.create offset_path(partition), offset.to_s, ignore: :node_exists
   end
