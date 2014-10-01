@@ -32,6 +32,7 @@ class Poseidon::ConsumerGroup
 
     # @attr_reader [Integer] partition consumer partition
     attr_reader :partition
+    attr_accessor :offset
 
     # @api private
     def initialize(group, partition, options = {})
@@ -227,7 +228,11 @@ class Poseidon::ConsumerGroup
       return false unless consumer
 
       @consumers.push consumer
+      prev_offset = consumer.offset
       yield consumer
+      unles opts[:commit]
+        consumer.offset = prev_offset
+      end
     end
 
     unless opts[:commit] == false || commit == false
